@@ -37,6 +37,7 @@
     <PackageReference Include="AltCover" />
     <PackageReference Include="Lextm.SharpSnmpLib" />
     <PackageReference Include="NSubstitute" />
+    <PackageReference Include="System.Private.Uri" />
     <PackageReference Include="System.Reactive.Linq" />
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio">

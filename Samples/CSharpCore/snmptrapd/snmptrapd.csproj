@@ -14,6 +14,7 @@
   <ItemGroup>
     <PackageReference Include="Lextm.SharpSnmpLib" />
     <PackageReference Include="Mono.Options.Core" />
+    <PackageReference Include="System.Private.Uri" />
   </ItemGroup>
 
   <ItemGroup>
