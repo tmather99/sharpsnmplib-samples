@@ -47,22 +47,39 @@ namespace Samples.Objects
         public IfMtu(int index, NetworkInterface networkInterface)
             : base("1.3.6.1.2.1.2.2.1.4.{0}", index.ToString())
         {
+            var ipProps = networkInterface.GetIPProperties();
+
+            // Prefer IPv4
             if (networkInterface.Supports(NetworkInterfaceComponent.IPv4))
             {
-                var pv4InterfaceProperties = networkInterface.GetIPProperties().GetIPv4Properties();
-                _data = new Integer32(pv4InterfaceProperties == null ? -1 : pv4InterfaceProperties.Mtu);
+                var ipv4 = ipProps.GetIPv4Properties();
+                if (ipv4 != null)
+                {
+                    _data = new Integer32(ipv4.Mtu);
+                    return;
+                }
             }
-            else
+
+            // Fallback to IPv6 (Hyper-V safe)
+            if (networkInterface.Supports(NetworkInterfaceComponent.IPv6))
             {
                 try
                 {
-                    _data = new Integer32(networkInterface.GetIPProperties().GetIPv6Properties().Mtu);
+                    var ipv6 = ipProps.GetIPv6Properties();
+                    _data = new Integer32(ipv6?.Mtu ?? 0);
+                    return;
                 }
-				catch (NotImplementedException)
-				{
-					_data = new Integer32(0);
-				}
+                catch (NetworkInformationException)
+                {
+                    // Hyper-V virtual adapters land here
+                }
+                catch (NotImplementedException)
+                {
+                }
             }
+
+            // Unavailable / virtual / non-operational
+            _data = new Integer32(0);
         }
 
         /// <summary>
